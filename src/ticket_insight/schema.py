@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import pandas as pd
+
 REQUIRED_COLUMNS: tuple[str, ...] = (
     "ticket_id",
     "title",
@@ -36,3 +38,11 @@ ANALYSIS_COLUMNS: tuple[str, ...] = (
     "analysis_provider",
     "analysis_processed_at",
 )
+
+
+def ensure_analysis_columns(dataframe: pd.DataFrame) -> pd.DataFrame:
+    enriched = dataframe.copy()
+    for column in ANALYSIS_COLUMNS:
+        if column not in enriched.columns:
+            enriched[column] = pd.NA
+    return enriched
