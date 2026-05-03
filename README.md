@@ -49,13 +49,15 @@ Colunas recomendadas:
 
 ## Configuracao de provedores
 
-A selecao de provedores LLM sera implementada nas proximas tarefas do backlog. O comportamento esperado e:
+O app permite selecionar um provedor LLM na interface Streamlit. Nesta etapa, a aplicacao resolve a chave API, mas ainda nao executa chamadas reais de analise.
 
-- usar variaveis de ambiente quando houver chave valida para o provedor selecionado;
-- solicitar chave via interface Streamlit quando a chave nao estiver no ambiente;
-- manter chaves digitadas somente na sessao Streamlit;
-- interromper o processamento com mensagem clara quando a chave estiver ausente;
-- nunca usar analise mockada quando o provedor nao estiver configurado.
+- `OpenAI`: configure `OPENAI_API_KEY`.
+- `Gemini`: configure `GEMINI_API_KEY`.
+- `Groq`: configure `GROQ_API_KEY`.
+
+Quando a variavel de ambiente do provedor selecionado existe, ela tem precedencia e a chave nao e exibida. Quando nao existe, a interface Streamlit solicita a chave com campo seguro. Chaves digitadas na interface ficam somente na sessao atual e nao sao gravadas em disco.
+
+Se nenhuma chave estiver disponivel, o processamento e interrompido com mensagem clara. A aplicacao nao usa analise mockada quando o provedor nao esta configurado.
 
 ## Testes e qualidade
 
