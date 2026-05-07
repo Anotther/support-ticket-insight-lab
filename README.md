@@ -1,26 +1,56 @@
 # Support Ticket Insight Lab
 
-Aplicacao Python e Streamlit para analisar tickets de suporte de infraestrutura a partir de um CSV enviado pelo usuario.
+Aplicacao Python e Streamlit para validar e preparar tickets de suporte de infraestrutura a partir de um CSV enviado pelo usuario.
 
-O MVP valida o schema do CSV, diferencia tickets abertos e fechados, calcula idade ou tempo de resolucao e prepara a base para classificacao, sentimento, sugestao de prioridade, resumo operacional, dashboard e exportacao.
+O projeto organiza a primeira etapa de um fluxo de inteligencia operacional para suporte: recebe uma base de tickets, valida o schema, separa tickets abertos e fechados, calcula idade ou tempo de resolucao e prepara colunas de analise para classificacao, sentimento, sugestao de prioridade, resumo e risco de SLA.
 
-Importante: a aplicacao nao usa dados mockados, CSV de exemplo embutido ou fallback silencioso. Sem upload de CSV, ela mostra apenas instrucoes e requisitos de schema.
+> **Nota de privacidade:** tickets de suporte podem conter dados pessoais, ativos internos e detalhes operacionais. Use arquivos anonimizados em ambientes publicos e configure chaves de provedores somente por variaveis de ambiente ou campos seguros da sessao.
 
-## Requisitos
+## Visao geral
 
-- Python 3.11 ou superior.
-- Dependencias em `requirements.txt`.
-- Um CSV de tickets com as colunas obrigatorias.
+1. O usuario abre o app Streamlit e envia um arquivo CSV de tickets.
+2. A aplicacao le o CSV sem carregar dados de exemplo, fallback silencioso ou registros mockados.
+3. O validador confere as colunas obrigatorias e normaliza datas em UTC.
+4. Tickets sem `closed_at` sao classificados como abertos e recebem `analysis_ticket_age_days`.
+5. Tickets com `closed_at` recebem `analysis_resolution_time_days`.
+6. Datas invalidas, `opened_at` vazio e `closed_at` anterior a `opened_at` interrompem o processamento com erro claro.
+7. A interface resolve a chave do provedor selecionado por variavel de ambiente ou por campo seguro da sessao.
+8. A camada de pipeline ja define o contrato de analise, mas chamadas reais para provedores LLM ainda nao foram implementadas no app.
 
-## Instalar e executar localmente
-
-```bash
-python -m venv .venv
-source .venv/bin/activate
-python -m pip install --upgrade pip
-pip install -r requirements.txt
-streamlit run app/streamlit_app.py
+```mermaid
+flowchart LR
+    A["Upload CSV"] --> B["Leitura com pandas"]
+    B --> C["Validacao de schema e datas"]
+    C --> D{"CSV valido?"}
+    D -- "Nao" --> E["Erros de validacao"]
+    D -- "Sim" --> F["DataFrame enriquecido"]
+    F --> G["Resolucao de chave do provedor"]
+    G --> H["Pipeline de analise planejado"]
 ```
+
+## O que foi implementado
+
+| Area | Comportamento |
+|---|---|
+| Upload e leitura | App Streamlit aceita CSV enviado pelo usuario e usa `pandas.read_csv` sem base demonstrativa embutida. |
+| Validacao de schema | Confere `ticket_id`, `title`, `description`, `opened_at`, `closed_at` e `priority`. |
+| Tratamento de datas | Converte datas para UTC, rejeita valores invalidos e impede fechamento anterior a abertura. |
+| Status analitico | Marca tickets como `open` ou `closed` em `analysis_status_type`. |
+| Metricas temporais | Calcula idade para tickets abertos e tempo de resolucao para tickets fechados. |
+| Provedores de IA | Suporte de configuracao para OpenAI, Gemini e Groq via variaveis de ambiente ou chave de sessao. |
+| Contrato do pipeline | Define resultado esperado para categoria, sentimento, prioridade sugerida, justificativa, resumo e risco de SLA. |
+| Qualidade automatizada | CI executa Ruff, verificacao de formato, Pytest e compilacao do app Streamlit. |
+
+## Stack
+
+| Ferramenta | Uso no projeto |
+|---|---|
+| Python 3.11+ | Runtime principal. |
+| Streamlit | Interface web para upload, validacao e configuracao do provedor. |
+| pandas | Leitura, validacao e enriquecimento tabular dos tickets. |
+| Pytest | Testes unitarios do validador, pipeline, exportacao, schema e configuracao. |
+| Ruff | Lint e checagem de formato. |
+| GitHub Actions | CI em push e pull request para `main`. |
 
 ## Schema do CSV
 
@@ -37,27 +67,42 @@ Colunas obrigatorias:
 
 Colunas recomendadas:
 
-`status`, `requester_department`, `requester_location`, `affected_service`, `asset_id`, `assigned_team`, `assignee`, `channel`, `impact`, `urgency`, `resolution_notes`.
+```text
+status, requester_department, requester_location, affected_service, asset_id,
+assigned_team, assignee, channel, impact, urgency, resolution_notes
+```
 
-## Tratamento de datas
+Exemplo minimo com dados sinteticos:
 
-- Tickets com `closed_at` vazio sao tratados como abertos.
-- Tickets com `closed_at` preenchido sao tratados como fechados.
-- Tickets abertos recebem `analysis_ticket_age_days`.
-- Tickets fechados recebem `analysis_resolution_time_days`.
-- Datas invalidas, `opened_at` ausente e `closed_at` anterior a `opened_at` geram erro de validacao.
+```csv
+ticket_id,title,description,opened_at,closed_at,priority
+INC-001,VPN indisponivel,Usuario nao consegue conectar a VPN,2026-05-01,,high
+INC-002,Fila de impressao travada,Servico de impressao parado no andar 2,2026-05-01T10:00:00Z,2026-05-02T12:00:00Z,medium
+```
 
 ## Configuracao de provedores
 
-O app permite selecionar um provedor LLM na interface Streamlit. Nesta etapa, a aplicacao resolve a chave API, mas ainda nao executa chamadas reais de analise.
+O app permite selecionar um provedor LLM na interface. Nesta versao, a aplicacao resolve a chave API, mas ainda nao executa chamadas reais de analise.
 
-- `OpenAI`: configure `OPENAI_API_KEY`.
-- `Gemini`: configure `GEMINI_API_KEY`.
-- `Groq`: configure `GROQ_API_KEY`.
+| Provedor | Variavel de ambiente |
+|---|---|
+| OpenAI | `OPENAI_API_KEY` |
+| Gemini | `GEMINI_API_KEY` |
+| Groq | `GROQ_API_KEY` |
 
-Quando a variavel de ambiente do provedor selecionado existe, ela tem precedencia e a chave nao e exibida. Quando nao existe, a interface Streamlit solicita a chave com campo seguro. Chaves digitadas na interface ficam somente na sessao atual e nao sao gravadas em disco.
+Quando a variavel de ambiente do provedor selecionado existe, ela tem precedencia e a chave nao e exibida. Quando nao existe, a interface solicita a chave com `st.text_input(type="password")`. Chaves digitadas na interface ficam somente na sessao atual e nao sao gravadas em disco pelo projeto.
 
-Se nenhuma chave estiver disponivel, o processamento e interrompido com mensagem clara. A aplicacao nao usa analise mockada quando o provedor nao esta configurado.
+## Instalar e executar localmente
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+streamlit run app/streamlit_app.py
+```
+
+Depois de abrir o app, envie um CSV com o schema obrigatorio. Sem upload, a aplicacao mostra apenas instrucoes e requisitos.
 
 ## Testes e qualidade
 
@@ -68,14 +113,9 @@ pytest
 PYTHONPATH=src python -m py_compile app/streamlit_app.py
 ```
 
-## Deploy no Streamlit Cloud
+Os mesmos comandos rodam no GitHub Actions para pull requests e pushes na branch `main`.
 
-1. Conecte o repositorio `Anotther/support-ticket-insight-lab` ao Streamlit Cloud.
-2. Configure o arquivo principal como `app/streamlit_app.py`.
-3. Use `requirements.txt` para instalar as dependencias.
-4. Configure secrets do Streamlit Cloud para chaves de provedores quando necessario.
-
-## Estrutura
+## Estrutura do projeto
 
 ```text
 support-ticket-insight-lab/
@@ -83,11 +123,25 @@ support-ticket-insight-lab/
 │  └─ streamlit_app.py
 ├─ src/
 │  └─ ticket_insight/
+│     ├─ config.py
+│     ├─ pipeline.py
+│     ├─ providers.py
+│     ├─ schema.py
+│     └─ validator.py
 ├─ tests/
-├─ .github/
-│  └─ workflows/
-├─ README.md
+├─ .github/workflows/
+├─ pyproject.toml
 ├─ requirements.txt
-├─ action_plan.md
-└─ resumo_executivo.md
+└─ README.md
 ```
+
+## Deploy no Streamlit Cloud
+
+1. Conecte este repositorio ao Streamlit Cloud.
+2. Configure o arquivo principal como `app/streamlit_app.py`.
+3. Use `requirements.txt` para instalar as dependencias.
+4. Configure secrets do Streamlit Cloud para `OPENAI_API_KEY`, `GEMINI_API_KEY` ou `GROQ_API_KEY`, conforme o provedor usado.
+
+## Licenca
+
+Distribuido sob a licenca MIT. Consulte `LICENSE` para mais detalhes.
