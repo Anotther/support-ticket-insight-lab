@@ -16,8 +16,9 @@ from ticket_insight.filters import filter_tickets  # noqa: E402
 from ticket_insight.loader import load_csv  # noqa: E402
 from ticket_insight.metrics import get_kpis  # noqa: E402
 from ticket_insight.providers import PROVIDER_METADATA, SUPPORTED_PROVIDERS  # noqa: E402
-from ticket_insight.schema import RECOMMENDED_COLUMNS, REQUIRED_COLUMNS  # noqa: E402
+from ticket_insight.schema import RECOMMENDED_COLUMNS, REQUIRED_COLUMNS, ensure_analysis_columns  # noqa: E402
 from ticket_insight.validator import validate_tickets  # noqa: E402
+from ticket_insight.exporter import dataframe_to_csv_bytes  # noqa: E402
 
 
 def main() -> None:
@@ -151,6 +152,24 @@ def main() -> None:
 
     st.subheader("Dados")
     st.dataframe(filtered_df, use_container_width=True)
+
+    st.subheader("Exportar")
+    col_exp1, col_exp2 = st.columns(2)
+    with col_exp1:
+        st.download_button(
+            label="Baixar CSV Completo",
+            data=dataframe_to_csv_bytes(ensure_analysis_columns(df)),
+            file_name="support_tickets_full.csv",
+            mime="text/csv",
+        )
+    with col_exp2:
+        st.download_button(
+            label="Baixar CSV Filtrado",
+            data=dataframe_to_csv_bytes(ensure_analysis_columns(filtered_df)),
+            file_name="support_tickets_filtered.csv",
+            mime="text/csv",
+            disabled=filtered_df.empty,
+        )
 
     if st.button("Processar tickets"):
         if not key_resolution.is_available:
