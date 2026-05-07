@@ -12,6 +12,7 @@ if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
 from ticket_insight.config import resolve_provider_api_key  # noqa: E402
+from ticket_insight.filters import filter_tickets  # noqa: E402
 from ticket_insight.loader import load_csv  # noqa: E402
 from ticket_insight.metrics import get_kpis  # noqa: E402
 from ticket_insight.providers import PROVIDER_METADATA, SUPPORTED_PROVIDERS  # noqa: E402
@@ -86,9 +87,59 @@ def main() -> None:
 
     st.success("CSV validado com sucesso.")
 
+    df = result.dataframe.copy()
+    st.sidebar.header("Filtros")
+
+    date_range = None
+    if "opened_at" in df.columns and not df["opened_at"].dropna().empty:
+        opened_at_dt = pd.to_datetime(df["opened_at"], errors="coerce").dropna()
+        if not opened_at_dt.empty:
+            min_date = opened_at_dt.min().date()
+            max_date = opened_at_dt.max().date()
+            date_selection = st.sidebar.date_input(
+                "Período de Abertura",
+                value=(min_date, max_date),
+                min_value=min_date,
+                max_value=max_date,
+            )
+            if isinstance(date_selection, tuple) and len(date_selection) == 2:
+                start_dt = pd.to_datetime(date_selection[0])
+                end_dt = pd.to_datetime(date_selection[1]) + pd.Timedelta(days=1, seconds=-1)
+                date_range = (start_dt, end_dt)
+
+    categorical_columns = [
+        "priority",
+        "analysis_status_type",
+        "requester_department",
+        "affected_service",
+        "assigned_team",
+        "analysis_category",
+        "analysis_sentiment",
+        "analysis_sla_risk",
+    ]
+
+    categorical_filters = {}
+    for col in categorical_columns:
+        if col in df.columns and not df[col].dropna().empty:
+            unique_values = df[col].dropna().unique().tolist()
+            try:
+                unique_values.sort()
+            except TypeError:
+                pass
+            
+            label = col.replace("_", " ").title()
+            selected = st.sidebar.multiselect(label, options=unique_values, default=[])
+            categorical_filters[col] = selected
+
+    filtered_df = filter_tickets(
+        df, 
+        date_range=date_range, 
+        categorical_filters=categorical_filters
+    )
+
     # Exibir KPIs
     st.subheader("Indicadores Principais")
-    kpis = get_kpis(result.dataframe)
+    kpis = get_kpis(filtered_df)
 
     col1, col2, col3, col4, col5, col6 = st.columns(6)
     col1.metric("Total de Tickets", kpis["total"])
@@ -99,7 +150,7 @@ def main() -> None:
     col6.metric("Tempo Médio de Resolução", kpis["avg_resolution_days"])
 
     st.subheader("Dados")
-    st.dataframe(result.dataframe, use_container_width=True)
+    st.dataframe(filtered_df, use_container_width=True)
 
     if st.button("Processar tickets"):
         if not key_resolution.is_available:
