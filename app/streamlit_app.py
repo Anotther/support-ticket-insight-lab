@@ -13,6 +13,7 @@ if str(SRC) not in sys.path:
 
 from ticket_insight.config import resolve_provider_api_key  # noqa: E402
 from ticket_insight.loader import load_csv  # noqa: E402
+from ticket_insight.metrics import get_kpis  # noqa: E402
 from ticket_insight.providers import PROVIDER_METADATA, SUPPORTED_PROVIDERS  # noqa: E402
 from ticket_insight.schema import RECOMMENDED_COLUMNS, REQUIRED_COLUMNS  # noqa: E402
 from ticket_insight.validator import validate_tickets  # noqa: E402
@@ -57,15 +58,24 @@ def main() -> None:
 
     key_resolution = resolve_provider_api_key(selected_provider, session_api_key=session_api_key)
 
-    uploaded_file = st.file_uploader("Arquivo CSV de tickets", type=["csv"])
-    if uploaded_file is None:
-        st.info("Envie um CSV para iniciar a validacao.")
-        return
+    use_mock = st.checkbox("Usar dados mockados para teste")
 
-    try:
-        dataframe = load_csv(uploaded_file)
-    except pd.errors.ParserError as exc:
-        st.error(f"Nao foi possivel ler o CSV: {exc}")
+    uploaded_file = st.file_uploader("Arquivo CSV de tickets", type=["csv"], disabled=use_mock)
+
+    if use_mock:
+        try:
+            dataframe = load_csv(ROOT / "support_tickets_mock.csv")
+        except FileNotFoundError:
+            st.error("Arquivo de mock não encontrado.")
+            return
+    elif uploaded_file is not None:
+        try:
+            dataframe = load_csv(uploaded_file)
+        except pd.errors.ParserError as exc:
+            st.error(f"Nao foi possivel ler o CSV: {exc}")
+            return
+    else:
+        st.info("Envie um CSV ou marque a opção de dados mockados para iniciar a validacao.")
         return
 
     result = validate_tickets(dataframe)
@@ -75,6 +85,20 @@ def main() -> None:
         return
 
     st.success("CSV validado com sucesso.")
+
+    # Exibir KPIs
+    st.subheader("Indicadores Principais")
+    kpis = get_kpis(result.dataframe)
+
+    col1, col2, col3, col4, col5, col6 = st.columns(6)
+    col1.metric("Total de Tickets", kpis["total"])
+    col2.metric("Abertos", kpis["open"])
+    col3.metric("Fechados", kpis["closed"])
+    col4.metric("Prioridade Alta/Crítica", kpis["high_priority"])
+    col5.metric("Idade Média (dias)", kpis["avg_age_days"])
+    col6.metric("Tempo Médio de Resolução", kpis["avg_resolution_days"])
+
+    st.subheader("Dados")
     st.dataframe(result.dataframe, use_container_width=True)
 
     if st.button("Processar tickets"):
