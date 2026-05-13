@@ -32,4 +32,4 @@ jobs:
         run: pytest
 
       - name: Streamlit import check
-        run: PYTHONPATH=src python -m py_compile app/streamlit_app.py
+        run: PYTHONPATH=src:app python -m py_compile app/app.py

@@ -1,5 +1,7 @@
-import pandas as pd
 from typing import Any
+
+import pandas as pd
+
 
 def filter_tickets(
     dataframe: pd.DataFrame,
@@ -22,7 +24,7 @@ def filter_tickets(
     if date_range and "opened_at" in filtered.columns:
         start_date, end_date = date_range
         opened_at_dt = pd.to_datetime(filtered["opened_at"], errors="coerce")
-        
+
         # Ensure we can compare timezone-aware or naive datetimes properly
         # Usually it's safer to convert everything to UTC
         start_date_utc = pd.to_datetime(start_date, utc=True)
