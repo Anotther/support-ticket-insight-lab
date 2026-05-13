@@ -8,7 +8,6 @@ from typing import Protocol
 
 import pandas as pd
 
-from ticket_insight.providers import get_provider_metadata
 from ticket_insight.schema import ensure_analysis_columns
 
 _ANALYZER_EXCLUDED_COLUMNS: frozenset[str] = frozenset(
@@ -51,6 +50,8 @@ def analyze_tickets(
     provider: str | None = None,
     processed_at: datetime | None = None,
     on_progress: Callable[[int, int], None] | None = None,
+    request_interval_s: float | None = None,
+    sleep_func: Callable[[float], None] = time.sleep,
 ) -> pd.DataFrame:
     if analyzer is None or provider is None:
         message = "Analysis provider clients are not implemented yet."
@@ -59,7 +60,6 @@ def analyze_tickets(
     enriched = ensure_analysis_columns(dataframe)
     processed_at_value = _format_processed_at(processed_at or datetime.now(UTC))
     total = len(enriched)
-    interval = get_provider_metadata(provider).request_interval_s
 
     categories: list[str] = []
     sentiments: list[str] = []
@@ -80,8 +80,8 @@ def analyze_tickets(
         if on_progress is not None:
             on_progress(i, total)
 
-        if i < total:
-            time.sleep(interval)
+        if request_interval_s is not None and i < total:
+            sleep_func(request_interval_s)
 
     enriched["analysis_category"] = categories
     enriched["analysis_sentiment"] = sentiments

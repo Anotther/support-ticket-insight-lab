@@ -96,7 +96,7 @@ Quando a variavel de ambiente do provedor selecionado existe, ela tem precedenci
 
 Apos a validacao do CSV e o enriquecimento temporal, cada ticket e enviado individualmente ao provedor LLM configurado. O sistema monta um prompt com os campos do ticket, envia ao modelo e mapeia o JSON retornado para colunas `analysis_*` no DataFrame.
 
-Os prompts — tanto o system prompt quanto o template de usuario — ficam em [`prompts.toml`](prompts.toml) na raiz do projeto. Editar esse arquivo altera o comportamento da analise na proxima execucao, sem reiniciar o app.
+Os prompts — tanto o system prompt quanto o template de usuario — ficam em [`src/ticket_insight/prompts.toml`](src/ticket_insight/prompts.toml). Editar esse arquivo altera o comportamento da analise na proxima execucao, sem reiniciar o app.
 
 ```mermaid
 flowchart TD
@@ -181,12 +181,12 @@ support-ticket-insight-lab/
 │     ├─ analyzer.py
 │     ├─ config.py
 │     ├─ pipeline.py
+│     ├─ prompts.toml
 │     ├─ providers.py
 │     ├─ schema.py
 │     └─ validator.py
 ├─ tests/
 ├─ .github/workflows/
-├─ prompts.toml
 ├─ pyproject.toml
 ├─ requirements.txt
 ├─ support_tickets_mock.csv

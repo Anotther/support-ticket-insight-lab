@@ -108,6 +108,35 @@ def test_pipeline_processed_at_naive_datetime_is_serialized_as_utc() -> None:
     assert result.iloc[0]["analysis_processed_at"] == "2026-05-03T12:30:00+00:00"
 
 
+def test_pipeline_does_not_sleep_by_default() -> None:
+    dataframe = pd.DataFrame({"ticket_id": ["INC-1", "INC-2"]})
+    sleep_calls: list[float] = []
+
+    analyze_tickets(
+        dataframe,
+        analyzer=FakeAnalyzer(),
+        provider="openai",
+        sleep_func=sleep_calls.append,
+    )
+
+    assert sleep_calls == []
+
+
+def test_pipeline_uses_injected_request_interval_between_tickets() -> None:
+    dataframe = pd.DataFrame({"ticket_id": ["INC-1", "INC-2", "INC-3"]})
+    sleep_calls: list[float] = []
+
+    analyze_tickets(
+        dataframe,
+        analyzer=FakeAnalyzer(),
+        provider="openai",
+        request_interval_s=1.25,
+        sleep_func=sleep_calls.append,
+    )
+
+    assert sleep_calls == [1.25, 1.25]
+
+
 def test_pipeline_does_not_send_generated_analysis_fields_to_analyzer() -> None:
     dataframe = pd.DataFrame(
         {

@@ -27,6 +27,7 @@ from ticket_insight.analyzer import LLMTicketAnalyzer  # noqa: E402
 from ticket_insight.filters import filter_tickets  # noqa: E402
 from ticket_insight.loader import load_csv  # noqa: E402
 from ticket_insight.pipeline import analyze_tickets  # noqa: E402
+from ticket_insight.providers import PROVIDER_METADATA  # noqa: E402
 from ticket_insight.validator import validate_tickets  # noqa: E402
 
 
@@ -122,6 +123,7 @@ def _render_process_button(df: pd.DataFrame, sidebar_cfg: SidebarConfig) -> None
             analyzer=analyzer,
             provider=sidebar_cfg.selected_provider,
             on_progress=update_progress,
+            request_interval_s=PROVIDER_METADATA[sidebar_cfg.selected_provider].request_interval_s,
         )
         progress_bar.progress(1.0, text="Análise concluída!")
         st.session_state.processed_df = analyzed_df
