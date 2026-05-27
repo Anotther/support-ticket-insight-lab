@@ -2,6 +2,8 @@
 
 Aplicacao Python e Streamlit para validar e preparar tickets de suporte de infraestrutura a partir de um CSV enviado pelo usuario.
 
+**App publicado:** [support-ticket-insight-lab.streamlit.app](https://support-ticket-insight-lab.streamlit.app/)
+
 O projeto organiza a primeira etapa de um fluxo de inteligencia operacional para suporte: recebe uma base de tickets, valida o schema, separa tickets abertos e fechados, calcula idade ou tempo de resolucao e prepara colunas de analise para classificacao, sentimento, sugestao de prioridade, resumo e risco de SLA.
 
 > **Nota de privacidade:** tickets de suporte podem conter dados pessoais, ativos internos e detalhes operacionais. Use arquivos anonimizados em ambientes publicos e configure chaves de provedores somente por variaveis de ambiente ou campos seguros da sessao.
@@ -194,6 +196,8 @@ support-ticket-insight-lab/
 ```
 
 ## Deploy no Streamlit Cloud
+
+App publicado: [https://support-ticket-insight-lab.streamlit.app/](https://support-ticket-insight-lab.streamlit.app/)
 
 1. Conecte este repositorio ao Streamlit Cloud.
 2. Configure o arquivo principal como `app/app.py`.
