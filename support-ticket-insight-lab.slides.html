@@ -6,43 +6,55 @@
 <title>Support Ticket Insight Lab — Carrossel</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Newsreader:ital,opsz,wght@0,18..72,400;0,18..72,500;1,18..72,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 <style>
-  /* ===== Design tokens — extraídos do repositório ===== */
-  /* .streamlit/config.toml + app/theme.py */
+  /* ================================================================
+     DESIGN SYSTEM — sóbrio, claro, minimalista
+     Acento herdado do repo (#4F8EF7) dessaturado para slate sóbrio.
+     Dados em escala de grafite; cor usada com parcimônia.
+     ================================================================ */
   :root {
-    --bg:        #0E1117; /* backgroundColor */
-    --surface:   #1A2233; /* secondaryBackgroundColor */
-    --surface-2: #141C2B;
-    --border:    #2D3F5E;
-    --text:      #E8EDF4; /* textColor */
-    --primary:   #4F8EF7; /* primaryColor / category */
-    --teal:      #2DD4BF; /* sentimento positivo */
-    --green:     #34D399; /* SLA baixo / prioridade baixa */
-    --amber:     #FBBF24; /* SLA médio */
-    --orange:    #FB923C; /* prioridade alta */
-    --red:       #F87171; /* SLA alto / negativo / crítica */
-    --slate:     #64748B; /* neutro */
+    --bg:        #F2F3F5;  /* página: cinza quase branco */
+    --paper:     #FFFFFF;
+    --paper-2:   #FBFBFC;
+    --ink:       #15181E;  /* quase preto */
+    --ink-2:     #2C313B;
+    --muted:     #677084;
+    --faint:     #9AA1AC;
+    --line:      #E4E7EC;  /* hairline */
+    --line-2:    #EDEFF2;
 
-    --muted: rgba(232, 237, 244, 0.62);
-    --soft:  rgba(232, 237, 244, 0.75);
-    --line:  rgba(45, 63, 94, 0.65);
-    --glass: rgba(26, 34, 51, 0.55);
+    --accent:      #34506B;  /* slate-blue sóbrio (derivado de #4F8EF7) */
+    --accent-2:    #4A6B8A;
+    --accent-soft: #ECF0F4;
+    --accent-line: #D5DEE7;
 
-    --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    --mono: 'JetBrains Mono', ui-monospace, monospace;
+    /* escala de grafite para barras/dados */
+    --g1: #2C313B;
+    --g2: #444B57;
+    --g3: #5E6675;
+    --g4: #828A98;
+    --g5: #A9B0BB;
+    --g6: #C7CCD4;
 
-    --grad: linear-gradient(120deg, #4F8EF7 0%, #2DD4BF 100%);
-    --pad: 96px;
+    --font:  'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --serif: 'Newsreader', Georgia, 'Times New Roman', serif;
+    --mono:  'JetBrains Mono', ui-monospace, monospace;
+
+    --pad: 100px;
+    --shadow-sm: 0 1px 2px rgba(16,24,40,.04);
+    --shadow:    0 1px 2px rgba(16,24,40,.04), 0 14px 36px rgba(16,24,40,.06);
+    --radius: 18px;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   html, body {
-    background: #05070c;
+    background: #DDE0E4;
     font-family: var(--font);
-    color: var(--text);
+    color: var(--ink);
     -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
 
   .carousel-container {
@@ -64,41 +76,32 @@
     scroll-snap-align: start;
     overflow: hidden;
     background: var(--bg);
-    border-radius: 4px;
     isolation: isolate;
   }
 
-  /* Noise texture estática */
+  /* textura de fundo: grade de pontos clara + grão sutil */
   .slide::before {
     content: "";
     position: absolute;
     inset: 0;
-    z-index: 1;
-    opacity: 0.03;
+    z-index: 0;
     pointer-events: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-image:
+      radial-gradient(circle at center, rgba(21,24,30,0.05) 1.1px, transparent 1.1px),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+    background-size: 26px 26px, 180px 180px;
+    background-position: 0 0, 0 0;
+    opacity: 1;
   }
-
-  /* Vignette estática */
-  .slide::after {
+  .slide .grain-mask {
+    /* clareia o centro para dar respiro (vignette invertida, estática) */
     content: "";
     position: absolute;
     inset: 0;
-    z-index: 1;
+    z-index: 0;
     pointer-events: none;
-    background: radial-gradient(120% 90% at 50% 32%, transparent 55%, rgba(0,0,0,0.45) 100%);
+    background: radial-gradient(120% 80% at 50% 30%, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.35) 45%, transparent 72%);
   }
-
-  .gradient-mesh { position: absolute; inset: 0; z-index: 0; overflow: hidden; }
-  .blob {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(90px);
-    opacity: 0.55;
-  }
-  .blob.b1 { width: 620px; height: 620px; background: #1d4ed8; }
-  .blob.b2 { width: 520px; height: 520px; background: #0d9488; }
-  .blob.b3 { width: 420px; height: 420px; background: #7c3aed; opacity: 0.32; }
 
   .slide-content {
     position: relative;
@@ -111,223 +114,248 @@
 
   /* ===== Tipografia ===== */
   .kicker {
-    font-size: 14px;
-    font-weight: 700;
-    letter-spacing: 5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 3.5px;
     text-transform: uppercase;
-    color: var(--primary);
+    color: var(--muted);
   }
-  .kicker.teal { color: var(--teal); }
+  .kicker::before {
+    content: "";
+    width: 26px;
+    height: 2px;
+    background: var(--accent);
+    display: inline-block;
+  }
 
   h1 {
-    font-size: 60px;
-    line-height: 1.04;
-    font-weight: 900;
-    letter-spacing: -1.5px;
+    font-size: 62px;
+    line-height: 1.05;
+    font-weight: 800;
+    letter-spacing: -1.8px;
+    color: var(--ink);
   }
   h2 {
     font-size: 50px;
-    line-height: 1.07;
-    font-weight: 900;
-    letter-spacing: -1px;
+    line-height: 1.08;
+    font-weight: 800;
+    letter-spacing: -1.2px;
+    color: var(--ink);
   }
-  .grad-text {
-    background: var(--grad);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+  .accent { color: var(--accent); }
+  em.ser {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 500;
+    letter-spacing: -0.5px;
+    color: var(--accent);
   }
+
   .body {
     font-size: 18px;
-    line-height: 1.6;
-    color: var(--soft);
+    line-height: 1.62;
+    color: var(--ink-2);
     font-weight: 400;
   }
+  .body.muted { color: var(--muted); }
+  .body b { color: var(--ink); font-weight: 600; }
+
+  /* hairline divider */
+  .rule { height: 1px; background: var(--line); border: 0; }
 
   /* ===== Pills / badges ===== */
   .pill {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 9px;
     padding: 9px 18px;
     font-size: 13px;
-    font-weight: 600;
+    font-weight: 500;
     border-radius: 9999px;
-    border: 1px solid var(--border);
-    background: var(--glass);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    color: var(--text);
+    border: 1px solid var(--line);
+    background: var(--paper);
+    color: var(--ink-2);
+    box-shadow: var(--shadow-sm);
   }
-  .pill .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--primary); }
+  .pill .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
 
-  .glass {
-    background: var(--glass);
-    border: 1px solid var(--border);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-radius: 20px;
+  .card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
   }
 
   .pagenum {
     position: absolute;
     right: var(--pad);
-    bottom: 54px;
+    bottom: 56px;
     z-index: 3;
     font-family: var(--mono);
-    font-size: 14px;
-    color: var(--muted);
+    font-size: 13px;
+    color: var(--faint);
     letter-spacing: 2px;
   }
   .brandmark {
     position: absolute;
     left: var(--pad);
-    bottom: 54px;
+    bottom: 56px;
     z-index: 3;
-    font-size: 14px;
-    font-weight: 600;
-    letter-spacing: 1px;
-    color: var(--muted);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    color: var(--faint);
   }
-  .brandmark b { color: var(--text); }
+  .brandmark b { color: var(--ink-2); font-weight: 600; }
 
   .spacer { flex: 1; }
   .row { display: flex; }
 
-  /* ===== Emblema temático (ticket) ===== */
+  /* ===== Emblema temático ===== */
   .emblem {
-    width: 168px; height: 168px;
-    border-radius: 32px;
+    width: 150px; height: 150px;
+    border-radius: 26px;
     display: grid; place-items: center;
-    background: linear-gradient(140deg, rgba(79,142,247,0.22), rgba(45,212,191,0.12));
-    border: 1px solid var(--border);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    background: var(--paper);
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow);
   }
-  .emblem svg { width: 86px; height: 86px; }
+  .emblem svg { width: 76px; height: 76px; }
 
-  .badges { display: flex; flex-wrap: wrap; gap: 12px; }
+  .badges { display: flex; flex-wrap: wrap; gap: 11px; }
 
-  /* ===== Stat grande ===== */
+  /* ===== Stat grande (serif editorial) ===== */
   .bigstat {
-    font-size: 200px;
-    font-weight: 900;
-    line-height: 0.9;
-    letter-spacing: -6px;
+    font-family: var(--serif);
+    font-size: 210px;
+    font-weight: 500;
+    line-height: 0.86;
+    letter-spacing: -4px;
+    color: var(--ink);
+    font-feature-settings: "tnum" 1;
   }
-  .bigstat small { font-size: 80px; font-weight: 800; }
+  .bigstat small { font-size: 78px; color: var(--accent); }
 
   /* progress bar estática */
   .track {
-    width: 100%; height: 22px;
+    width: 100%; height: 14px;
     border-radius: 9999px;
-    background: rgba(255,255,255,0.06);
-    border: 1px solid var(--border);
+    background: var(--line-2);
     overflow: hidden;
   }
-  .fill { height: 100%; border-radius: 9999px; background: var(--grad); }
+  .fill { height: 100%; border-radius: 9999px; background: var(--accent); }
 
   /* ===== Pipeline ===== */
-  .pipe { display: flex; flex-direction: column; gap: 18px; }
-  .pipe-row { display: flex; align-items: center; gap: 18px; }
+  .pipe { display: flex; flex-direction: column; gap: 16px; }
+  .pipe-row { display: flex; align-items: center; gap: 16px; }
   .pstep {
     flex: 1;
     display: flex; align-items: center; gap: 18px;
     padding: 22px 26px;
-    border-radius: 18px;
   }
   .pstep .ic {
-    width: 56px; height: 56px; flex: 0 0 56px;
-    border-radius: 14px;
+    width: 52px; height: 52px; flex: 0 0 52px;
+    border-radius: 13px;
     display: grid; place-items: center;
-    background: rgba(79,142,247,0.14);
-    border: 1px solid var(--border);
+    background: var(--accent-soft);
+    border: 1px solid var(--accent-line);
   }
-  .pstep .ic svg { width: 28px; height: 28px; }
-  .pstep .pt { font-size: 22px; font-weight: 700; }
-  .pstep .ps { font-size: 14px; color: var(--muted); font-family: var(--mono); margin-top: 3px; }
-  .arrow { color: var(--primary); flex: 0 0 auto; display: grid; place-items: center; }
-  .arrow svg { width: 30px; height: 30px; }
+  .pstep .ic svg { width: 26px; height: 26px; }
+  .pstep .pt { font-size: 21px; font-weight: 700; color: var(--ink); letter-spacing: -0.3px; }
+  .pstep .ps { font-size: 13px; color: var(--muted); font-family: var(--mono); margin-top: 4px; }
+  .arrow { color: var(--faint); flex: 0 0 auto; display: grid; place-items: center; }
+  .arrow svg { width: 26px; height: 26px; }
 
   /* ===== Cards metodologia ===== */
-  .mcards { display: flex; flex-direction: column; gap: 22px; }
-  .mcard { padding: 30px 32px; border-radius: 20px; display: flex; gap: 24px; align-items: flex-start; }
+  .mcards { display: flex; flex-direction: column; gap: 18px; }
+  .mcard { padding: 32px 34px; display: flex; gap: 26px; align-items: flex-start; }
   .mcard .num {
-    font-size: 40px; font-weight: 900; line-height: 1;
-    background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent;
+    font-family: var(--serif);
+    font-size: 40px; font-weight: 500; line-height: 1;
+    color: var(--accent);
     flex: 0 0 auto;
+    min-width: 56px;
   }
-  .mcard h3 { font-size: 25px; font-weight: 800; margin-bottom: 8px; }
-  .mcard p { font-size: 17px; line-height: 1.55; color: var(--soft); }
-  .mcard .tag { color: var(--teal); font-weight: 700; }
+  .mcard h3 { font-size: 25px; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.4px; color: var(--ink); }
+  .mcard p { font-size: 17px; line-height: 1.55; color: var(--ink-2); }
+  .mcard .tag { color: var(--accent); font-weight: 600; }
 
   /* ===== KPI grid ===== */
-  .kgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; }
-  .kpi { padding: 40px 38px; border-radius: 22px; position: relative; }
-  .kpi .v { font-size: 88px; font-weight: 900; line-height: 1; letter-spacing: -3px; }
-  .kpi .v small { font-size: 40px; font-weight: 800; }
-  .kpi .l { font-size: 19px; font-weight: 700; margin-top: 14px; }
-  .kpi .c { font-size: 15px; color: var(--muted); margin-top: 6px; line-height: 1.4; }
-  .kpi .bar { position: absolute; left: 0; top: 22px; bottom: 22px; width: 5px; border-radius: 9999px; }
+  .kgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+  .kpi { padding: 38px 38px; position: relative; overflow: hidden; }
+  .kpi .v {
+    font-family: var(--serif);
+    font-size: 92px; font-weight: 500; line-height: 1; letter-spacing: -3px;
+    color: var(--ink);
+    font-feature-settings: "tnum" 1;
+  }
+  .kpi .v small { font-size: 38px; color: var(--accent); }
+  .kpi .l { font-size: 18px; font-weight: 700; margin-top: 16px; color: var(--ink); letter-spacing: -0.2px; }
+  .kpi .c { font-size: 14px; color: var(--muted); margin-top: 6px; line-height: 1.45; }
+  .kpi .tick { position: absolute; left: 0; top: 38px; width: 3px; height: 64px; border-radius: 9999px; background: var(--accent); }
 
   /* ===== Bars distribuição ===== */
-  .dist { display: flex; flex-direction: column; gap: 20px; }
-  .drow { display: grid; grid-template-columns: 220px 1fr 70px; align-items: center; gap: 20px; }
-  .dlabel { font-size: 19px; font-weight: 700; }
-  .dtrack { height: 30px; border-radius: 9999px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); overflow: hidden; }
+  .dist { display: flex; flex-direction: column; gap: 22px; }
+  .drow { display: grid; grid-template-columns: 210px 1fr 56px; align-items: center; gap: 22px; }
+  .dlabel { font-size: 19px; font-weight: 600; color: var(--ink); }
+  .dtrack { height: 14px; border-radius: 9999px; background: var(--line-2); overflow: hidden; }
   .dfill { height: 100%; border-radius: 9999px; }
-  .dval { font-family: var(--mono); font-size: 20px; font-weight: 700; text-align: right; }
+  .dval { font-family: var(--mono); font-size: 19px; font-weight: 500; text-align: right; color: var(--ink-2); }
 
   /* ===== Mockup dashboard ===== */
-  .mock { border-radius: 22px; overflow: hidden; border: 1px solid var(--border); background: var(--surface-2); }
-  .mock .bar-top { display: flex; align-items: center; gap: 8px; padding: 14px 18px; background: #0f1622; border-bottom: 1px solid var(--border); }
-  .mock .bar-top i { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
-  .mock .bar-top span { margin-left: 12px; font-family: var(--mono); font-size: 13px; color: var(--muted); }
+  .mock { border-radius: var(--radius); overflow: hidden; border: 1px solid var(--line); background: var(--paper); box-shadow: var(--shadow); }
+  .mock .bar-top { display: flex; align-items: center; gap: 7px; padding: 14px 18px; background: var(--paper-2); border-bottom: 1px solid var(--line); }
+  .mock .bar-top i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; background: var(--g6); }
+  .mock .bar-top span { margin-left: 12px; font-family: var(--mono); font-size: 12px; color: var(--muted); }
   .mock .body-m { padding: 26px; }
-  .mock-kpis { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 22px; }
-  .mock-kpi { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
-  .mock-kpi b { font-size: 30px; font-weight: 900; display: block; }
-  .mock-kpi small { font-size: 12px; color: var(--muted); }
-  .mock-charts { display: grid; grid-template-columns: 1.3fr 1fr; gap: 16px; }
-  .mock-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px; }
-  .mock-panel .h { font-size: 13px; color: var(--muted); margin-bottom: 14px; font-weight: 600; }
-  .mbars { display: flex; align-items: flex-end; gap: 12px; height: 130px; }
-  .mbars i { flex: 1; border-radius: 6px 6px 0 0; display: block; }
-  .mlines { display: flex; flex-direction: column; gap: 12px; }
+  .mock-kpis { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 20px; }
+  .mock-kpi { background: var(--paper-2); border: 1px solid var(--line); border-radius: 11px; padding: 16px; }
+  .mock-kpi b { font-family: var(--serif); font-size: 32px; font-weight: 500; display: block; color: var(--ink); line-height: 1; }
+  .mock-kpi small { font-size: 12px; color: var(--muted); display: block; margin-top: 8px; }
+  .mock-charts { display: grid; grid-template-columns: 1.25fr 1fr; gap: 14px; }
+  .mock-panel { background: var(--paper-2); border: 1px solid var(--line); border-radius: 11px; padding: 18px; }
+  .mock-panel .h { font-size: 12px; color: var(--muted); margin-bottom: 16px; font-weight: 600; letter-spacing: 0.3px; }
+  .mbars { display: flex; align-items: flex-end; gap: 12px; height: 124px; }
+  .mbars i { flex: 1; border-radius: 4px 4px 0 0; display: block; }
+  .mlines { display: flex; flex-direction: column; gap: 13px; }
   .mline { display: flex; align-items: center; gap: 10px; }
-  .mline u { height: 14px; border-radius: 9999px; display: block; }
-  .mline span { font-size: 12px; color: var(--muted); text-decoration: none; }
+  .mline u { height: 12px; border-radius: 9999px; display: block; }
+  .mline span { font-size: 12px; color: var(--muted); text-decoration: none; min-width: 54px; }
 
-  .feat { display: flex; gap: 16px; }
-  .feat .fc { flex: 1; padding: 22px; border-radius: 16px; }
-  .feat .fi { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; background: rgba(45,212,191,0.14); border: 1px solid var(--border); margin-bottom: 14px; }
-  .feat .fi svg { width: 22px; height: 22px; }
-  .feat h4 { font-size: 18px; font-weight: 800; margin-bottom: 6px; }
-  .feat p { font-size: 14px; color: var(--muted); line-height: 1.45; }
+  .feat { display: flex; gap: 14px; }
+  .feat .fc { flex: 1; padding: 24px; }
+  .feat .fi { width: 42px; height: 42px; border-radius: 11px; display: grid; place-items: center; background: var(--accent-soft); border: 1px solid var(--accent-line); margin-bottom: 16px; }
+  .feat .fi svg { width: 21px; height: 21px; }
+  .feat h4 { font-size: 18px; font-weight: 700; margin-bottom: 7px; color: var(--ink); letter-spacing: -0.2px; }
+  .feat p { font-size: 14px; color: var(--muted); line-height: 1.5; }
 
   /* ===== Slide 8 ===== */
-  .learn { font-size: 40px; font-weight: 900; line-height: 1.12; letter-spacing: -1px; }
-  .qbox { padding: 32px 34px; border-radius: 20px; }
-  .qbox .q { font-size: 22px; font-weight: 600; line-height: 1.45; }
+  .learn { font-size: 44px; font-weight: 800; line-height: 1.14; letter-spacing: -1.2px; color: var(--ink); }
+  .qbox { padding: 34px 36px; }
+  .qbox .qk { font-size: 12px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 14px; }
+  .qbox .q { font-size: 22px; font-weight: 500; line-height: 1.48; color: var(--ink-2); }
   .signature { display: flex; align-items: center; gap: 18px; }
   .avatar {
-    width: 72px; height: 72px; border-radius: 50%;
-    display: grid; place-items: center; font-size: 28px; font-weight: 900; color: #06241f;
-    background: var(--grad);
+    width: 70px; height: 70px; border-radius: 50%;
+    display: grid; place-items: center;
+    font-family: var(--serif); font-size: 30px; font-weight: 500; color: var(--paper);
+    background: var(--accent);
   }
-  .signature .nm { font-size: 24px; font-weight: 800; }
-  .signature .tt { font-size: 16px; color: var(--muted); }
+  .signature .nm { font-size: 23px; font-weight: 700; color: var(--ink); letter-spacing: -0.3px; }
+  .signature .tt { font-size: 15px; color: var(--muted); margin-top: 2px; }
   .ghlink {
     display: inline-flex; align-items: center; gap: 12px;
-    font-family: var(--mono); font-size: 18px; font-weight: 600;
-    padding: 16px 24px; border-radius: 14px;
-    border: 1px solid var(--border); background: var(--glass);
-    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-    color: var(--text);
+    font-family: var(--mono); font-size: 17px; font-weight: 500;
+    padding: 16px 24px; border-radius: 13px;
+    border: 1px solid var(--line); background: var(--paper);
+    color: var(--ink); box-shadow: var(--shadow-sm);
   }
-  .ghlink svg { width: 24px; height: 24px; }
+  .ghlink svg { width: 22px; height: 22px; color: var(--ink-2); }
 
-  .eyebrow-stat { display: flex; align-items: baseline; gap: 14px; }
+  .eyebrow-stat { display: flex; align-items: baseline; gap: 28px; }
 
   /* ===== PRINT / PDF export 1080x1350 ===== */
   @page { size: 1080px 1350px; margin: 0; }
@@ -338,7 +366,6 @@
       width: 100%;
       height: auto;
       min-height: 1350px;
-      border-radius: 0;
       page-break-after: always;
       break-after: page;
     }
@@ -351,17 +378,12 @@
 
   <!-- ============ SLIDE 1 — CAPA ============ -->
   <section class="slide" data-slide="1">
-    <div class="gradient-mesh">
-      <div class="blob b1" style="top:-180px; left:-140px;"></div>
-      <div class="blob b2" style="bottom:-160px; right:-120px;"></div>
-      <div class="blob b3" style="top:520px; left:560px;"></div>
-    </div>
+    <div class="grain-mask"></div>
     <div class="slide-content">
       <div class="row" style="justify-content:space-between; align-items:flex-start;">
         <div class="kicker">Inteligência operacional · Suporte de TI</div>
         <div class="emblem">
-          <svg viewBox="0 0 24 24" fill="none" stroke="url(#g1)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-            <defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4F8EF7"/><stop offset="1" stop-color="#2DD4BF"/></linearGradient></defs>
+          <svg viewBox="0 0 24 24" fill="none" stroke="#34506B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M3 9a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2 2 2 0 0 0 0 4 2 2 0 0 1-2 2H5a2 2 0 0 1-2-2 2 2 0 0 0 0-4z"/>
             <path d="M9 7v10" stroke-dasharray="1.5 2.5"/>
             <path d="M14.5 11.5l2 2 3-3.5"/>
@@ -371,18 +393,20 @@
 
       <div class="spacer"></div>
 
-      <h1 style="max-width:880px;">Cada chamado de TI,<br/><span class="grad-text">lido e priorizado por IA</span></h1>
+      <h1 style="max-width:880px;">Cada chamado de TI,<br/>lido e <em class="ser">priorizado por IA</em></h1>
 
-      <p class="body" style="margin-top:30px; max-width:760px;">
-        Um caso com <b style="color:var(--text)">100 chamados</b> de infraestrutura — cada um devolvendo
-        <b style="color:var(--text)">6 dimensões de análise</b>: categoria, sentimento, prioridade, justificativa, resumo e risco de SLA.
+      <hr class="rule" style="margin:38px 0 30px; max-width:120px; height:2px; background:var(--accent);" />
+
+      <p class="body" style="max-width:740px;">
+        Um caso com <b>100 chamados</b> de infraestrutura — cada um devolvendo
+        <b>6 dimensões de análise</b>: categoria, sentimento, prioridade, justificativa, resumo e risco de SLA.
       </p>
 
       <div class="badges" style="margin-top:46px;">
         <span class="pill"><span class="dot"></span>Python</span>
-        <span class="pill"><span class="dot" style="background:var(--teal)"></span>Streamlit</span>
-        <span class="pill"><span class="dot" style="background:var(--amber)"></span>pandas</span>
-        <span class="pill"><span class="dot" style="background:var(--orange)"></span>OpenAI · Gemini · Groq</span>
+        <span class="pill"><span class="dot"></span>Streamlit</span>
+        <span class="pill"><span class="dot"></span>pandas</span>
+        <span class="pill"><span class="dot"></span>OpenAI · Gemini · Groq</span>
       </div>
 
       <div class="spacer"></div>
@@ -393,13 +417,10 @@
 
   <!-- ============ SLIDE 2 — CONTEXTO ============ -->
   <section class="slide" data-slide="2">
-    <div class="gradient-mesh">
-      <div class="blob b1" style="top:-220px; right:-160px; background:#b91c1c; opacity:0.4;"></div>
-      <div class="blob b2" style="bottom:-200px; left:-160px;"></div>
-    </div>
+    <div class="grain-mask"></div>
     <div class="slide-content">
       <div class="kicker">O problema que ninguém vê</div>
-      <h2 style="margin-top:22px; max-width:840px;">A fila esconde o que é <span class="grad-text">realmente urgente</span></h2>
+      <h2 style="margin-top:24px; max-width:840px;">A fila esconde o que é <em class="ser">realmente urgente</em></h2>
       <p class="body" style="margin-top:26px; max-width:780px;">
         Em operações de TI, o chamado entra com a prioridade que o solicitante escolheu na pressa.
         Sem uma leitura estruturada, o crítico se mistura ao rotineiro — e o SLA escorre sem alarme.
@@ -408,20 +429,20 @@
       <div class="spacer"></div>
 
       <div class="eyebrow-stat">
-        <div class="bigstat grad-text">59<small>%</small></div>
-        <div style="padding-bottom:24px; max-width:360px;">
-          <div style="font-size:22px; font-weight:800; line-height:1.3;">dos chamados já chegam como alta ou crítica</div>
-          <div class="body" style="font-size:16px; margin-top:8px;">59 de 100 tickets — 32 críticos e 27 de alta prioridade.</div>
+        <div class="bigstat">59<small>%</small></div>
+        <div style="padding-bottom:18px; max-width:360px;">
+          <div style="font-size:22px; font-weight:700; line-height:1.32; color:var(--ink); letter-spacing:-0.3px;">dos chamados já chegam como alta ou crítica</div>
+          <div class="body muted" style="font-size:16px; margin-top:10px;">59 de 100 tickets — 32 críticos e 27 de alta prioridade.</div>
         </div>
       </div>
 
-      <div class="glass" style="margin-top:42px; padding:34px;">
-        <div class="row" style="justify-content:space-between; margin-bottom:14px;">
-          <span style="font-weight:700; font-size:17px;">Alta + Crítica na base</span>
-          <span class="dval" style="color:var(--orange)">59 / 100</span>
+      <div class="card" style="margin-top:46px; padding:34px;">
+        <div class="row" style="justify-content:space-between; margin-bottom:16px;">
+          <span style="font-weight:600; font-size:16px; color:var(--ink);">Alta + Crítica na base</span>
+          <span class="dval" style="color:var(--accent); font-weight:600;">59 / 100</span>
         </div>
         <div class="track"><div class="fill" style="width:59%;"></div></div>
-        <div class="row" style="justify-content:space-between; margin-top:14px; font-size:14px; color:var(--muted);">
+        <div class="row" style="justify-content:space-between; margin-top:16px; font-size:14px; color:var(--muted);">
           <span>Crítica 32 · Alta 27</span><span>Média 26 · Baixa 15</span>
         </div>
       </div>
@@ -434,50 +455,47 @@
 
   <!-- ============ SLIDE 3 — PIPELINE ============ -->
   <section class="slide" data-slide="3">
-    <div class="gradient-mesh">
-      <div class="blob b1" style="top:-180px; left:-160px;"></div>
-      <div class="blob b2" style="bottom:-220px; right:-140px;"></div>
-    </div>
+    <div class="grain-mask"></div>
     <div class="slide-content">
       <div class="kicker">Arquitetura</div>
-      <h2 style="margin-top:22px;">Como o sistema <span class="grad-text">funciona</span></h2>
+      <h2 style="margin-top:24px;">Como o sistema <em class="ser">funciona</em></h2>
       <p class="body" style="margin-top:20px; max-width:760px;">Do CSV cru ao dashboard analisado — um pipeline com validação estrita antes de qualquer chamada de IA.</p>
 
       <div class="spacer"></div>
 
       <div class="pipe">
         <div class="pipe-row">
-          <div class="pstep glass">
-            <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#4F8EF7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M12 3v13"/><path d="m7 8 5-5 5 5"/></svg></div>
+          <div class="pstep card">
+            <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#34506B" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M12 3v13"/><path d="m7 8 5-5 5 5"/></svg></div>
             <div><div class="pt">Upload do CSV</div><div class="ps">Streamlit · uploader</div></div>
           </div>
-          <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></div>
-          <div class="pstep glass">
-            <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/></svg></div>
+          <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></div>
+          <div class="pstep card">
+            <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#34506B" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/></svg></div>
             <div><div class="pt">Validação de schema</div><div class="ps">validator · datas UTC</div></div>
           </div>
         </div>
 
         <div class="pipe-row">
-          <div class="pstep glass">
-            <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#FBBF24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+          <div class="pstep card">
+            <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#34506B" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
             <div><div class="pt">Enriquecimento temporal</div><div class="ps">idade · tempo de resolução</div></div>
           </div>
-          <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></div>
-          <div class="pstep glass">
-            <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#FB923C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3 3 3 0 0 0-3 3 3 3 0 0 0 0 6 3 3 0 0 0 3 3 3 3 0 0 0 6 0 3 3 0 0 0 3-3 3 3 0 0 0 0-6 3 3 0 0 0-3-3 3 3 0 0 0-3-3z"/><path d="M12 8v8M9 12h6"/></svg></div>
+          <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></div>
+          <div class="pstep card">
+            <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#34506B" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3 3 3 0 0 0-3 3 3 3 0 0 0 0 6 3 3 0 0 0 3 3 3 3 0 0 0 6 0 3 3 0 0 0 3-3 3 3 0 0 0 0-6 3 3 0 0 0-3-3 3 3 0 0 0-3-3z"/><path d="M12 8v8M9 12h6"/></svg></div>
             <div><div class="pt">Análise LLM (por ticket)</div><div class="ps">OpenAI · Gemini · Groq</div></div>
           </div>
         </div>
 
         <div class="pipe-row">
-          <div class="pstep glass">
-            <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#4F8EF7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
+          <div class="pstep card">
+            <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#34506B" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
             <div><div class="pt">Colunas analysis_*</div><div class="ps">6 dimensões + metadados</div></div>
           </div>
-          <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></div>
-          <div class="pstep glass">
-            <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m7 14 3-4 3 2 4-6"/></svg></div>
+          <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></div>
+          <div class="pstep card">
+            <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#34506B" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m7 14 3-4 3 2 4-6"/></svg></div>
             <div><div class="pt">Dashboard + exportação</div><div class="ps">KPIs · filtros · CSV</div></div>
           </div>
         </div>
@@ -491,32 +509,29 @@
 
   <!-- ============ SLIDE 4 — METODOLOGIA ============ -->
   <section class="slide" data-slide="4">
-    <div class="gradient-mesh">
-      <div class="blob b1" style="top:-200px; right:-180px;"></div>
-      <div class="blob b3" style="bottom:-140px; left:-100px; opacity:0.4;"></div>
-    </div>
+    <div class="grain-mask"></div>
     <div class="slide-content">
       <div class="kicker">Decisões de engenharia</div>
-      <h2 style="margin-top:22px;">Por que análise <span class="grad-text">ticket a ticket?</span></h2>
+      <h2 style="margin-top:24px;">Por que análise <em class="ser">ticket a ticket?</em></h2>
 
       <div class="spacer"></div>
 
       <div class="mcards">
-        <div class="mcard glass">
+        <div class="mcard card">
           <div class="num">01</div>
           <div>
             <h3>Análise individual, não em lote</h3>
             <p>Escolhi enviar <span class="tag">cada chamado</span> ao LLM porque categoria, sentimento e risco de SLA dependem do contexto único do ticket — média não captura o caso crítico.</p>
           </div>
         </div>
-        <div class="mcard glass">
+        <div class="mcard card">
           <div class="num">02</div>
           <div>
             <h3>Provedores plugáveis, prompts em arquivo</h3>
             <p>Escolhi <span class="tag">OpenAI, Gemini e Groq</span> com os prompts em <span class="tag">prompts.toml</span>: mudar o comportamento da análise é editar um arquivo — sem lock-in e sem redeploy.</p>
           </div>
         </div>
-        <div class="mcard glass">
+        <div class="mcard card">
           <div class="num">03</div>
           <div>
             <h3>Validação antes da inteligência</h3>
@@ -533,46 +548,43 @@
 
   <!-- ============ SLIDE 5 — MÉTRICAS ============ -->
   <section class="slide" data-slide="5">
-    <div class="gradient-mesh">
-      <div class="blob b1" style="top:-160px; left:-140px;"></div>
-      <div class="blob b2" style="bottom:-180px; right:-160px;"></div>
-    </div>
+    <div class="grain-mask"></div>
     <div class="slide-content">
       <div class="kicker">Resultados</div>
-      <h2 style="margin-top:22px;">O sistema em <span class="grad-text">números</span></h2>
+      <h2 style="margin-top:24px;">O sistema em <em class="ser">números</em></h2>
 
       <div class="spacer"></div>
 
       <div class="kgrid">
-        <div class="kpi glass">
-          <div class="bar" style="background:var(--primary)"></div>
+        <div class="kpi card">
+          <div class="tick"></div>
           <div class="v">100</div>
           <div class="l">Tickets analisados</div>
           <div class="c">Base completa, ticket a ticket</div>
         </div>
-        <div class="kpi glass">
-          <div class="bar" style="background:var(--orange)"></div>
+        <div class="kpi card">
+          <div class="tick"></div>
           <div class="v">59<small>%</small></div>
           <div class="l">Prioridade alta ou crítica</div>
           <div class="c">Onde a equipe deve olhar primeiro</div>
         </div>
-        <div class="kpi glass">
-          <div class="bar" style="background:var(--teal)"></div>
+        <div class="kpi card">
+          <div class="tick"></div>
           <div class="v">1,5<small> d</small></div>
           <div class="l">Tempo médio de resolução</div>
           <div class="c">Baseline real dos 65 fechados</div>
         </div>
-        <div class="kpi glass">
-          <div class="bar" style="background:var(--amber)"></div>
+        <div class="kpi card">
+          <div class="tick"></div>
           <div class="v">6</div>
           <div class="l">Dimensões por ticket</div>
           <div class="c">Categoria · sentimento · prioridade · SLA…</div>
         </div>
       </div>
 
-      <div class="glass" style="margin-top:30px; padding:24px 32px; display:flex; justify-content:space-between; align-items:center;">
-        <span style="font-weight:700; font-size:17px;">Contexto da base</span>
-        <span class="body" style="font-size:16px;">35 abertos · 65 fechados · período 01/04 → 06/05/2026</span>
+      <div class="card" style="margin-top:26px; padding:24px 32px; display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-weight:600; font-size:16px; color:var(--ink);">Contexto da base</span>
+        <span class="body muted" style="font-size:15px;">35 abertos · 65 fechados · período 01/04 → 06/05/2026</span>
       </div>
 
       <div class="spacer"></div>
@@ -583,54 +595,51 @@
 
   <!-- ============ SLIDE 6 — DISTRIBUIÇÃO ============ -->
   <section class="slide" data-slide="6">
-    <div class="gradient-mesh">
-      <div class="blob b2" style="top:-180px; right:-140px;"></div>
-      <div class="blob b1" style="bottom:-200px; left:-160px;"></div>
-    </div>
+    <div class="grain-mask"></div>
     <div class="slide-content">
       <div class="kicker">Padrões encontrados</div>
-      <h2 style="margin-top:22px;">Chamados por <span class="grad-text">serviço afetado</span></h2>
-      <p class="body" style="margin-top:18px; max-width:760px;">Top 6 serviços em volume de tickets — base de 100 chamados.</p>
+      <h2 style="margin-top:24px;">Chamados por <em class="ser">serviço afetado</em></h2>
+      <p class="body muted" style="margin-top:18px; max-width:760px;">Top 6 serviços em volume de tickets — base de 100 chamados.</p>
 
       <div class="spacer"></div>
 
       <div class="dist">
         <div class="drow">
           <div class="dlabel">VPN</div>
-          <div class="dtrack"><div class="dfill" style="width:100%; background:var(--primary);"></div></div>
+          <div class="dtrack"><div class="dfill" style="width:100%; background:var(--accent);"></div></div>
           <div class="dval">10</div>
         </div>
         <div class="drow">
           <div class="dlabel">Certificado</div>
-          <div class="dtrack"><div class="dfill" style="width:100%; background:var(--teal);"></div></div>
+          <div class="dtrack"><div class="dfill" style="width:100%; background:var(--g2);"></div></div>
           <div class="dval">10</div>
         </div>
         <div class="drow">
           <div class="dlabel">Storage</div>
-          <div class="dtrack"><div class="dfill" style="width:90%; background:#38bdf8;"></div></div>
+          <div class="dtrack"><div class="dfill" style="width:90%; background:var(--g3);"></div></div>
           <div class="dval">9</div>
         </div>
         <div class="drow">
           <div class="dlabel">Rede</div>
-          <div class="dtrack"><div class="dfill" style="width:80%; background:var(--amber);"></div></div>
+          <div class="dtrack"><div class="dfill" style="width:80%; background:var(--g4);"></div></div>
           <div class="dval">8</div>
         </div>
         <div class="drow">
           <div class="dlabel">MFA</div>
-          <div class="dtrack"><div class="dfill" style="width:70%; background:var(--orange);"></div></div>
+          <div class="dtrack"><div class="dfill" style="width:70%; background:var(--g5);"></div></div>
           <div class="dval">7</div>
         </div>
         <div class="drow">
           <div class="dlabel">Backup</div>
-          <div class="dtrack"><div class="dfill" style="width:70%; background:#a78bfa;"></div></div>
+          <div class="dtrack"><div class="dfill" style="width:70%; background:var(--g5);"></div></div>
           <div class="dval">7</div>
         </div>
       </div>
 
-      <div class="glass" style="margin-top:46px; padding:30px 34px; display:flex; gap:20px; align-items:flex-start;">
-        <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="#2DD4BF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 auto;"><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/><circle cx="12" cy="12" r="4"/></svg>
-        <p style="font-size:19px; line-height:1.5; color:var(--soft);">
-          <b style="color:var(--text)">VPN, Certificado e Storage</b> concentram quase um terço dos chamados — alvos diretos para ação de causa-raiz, não apenas atendimento reativo.
+      <div class="card" style="margin-top:48px; padding:30px 34px; display:flex; gap:22px; align-items:flex-start;">
+        <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="#34506B" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 auto; margin-top:2px;"><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="4"/></svg>
+        <p style="font-size:19px; line-height:1.52; color:var(--ink-2);">
+          <b style="color:var(--ink); font-weight:600;">VPN, Certificado e Storage</b> concentram quase um terço dos chamados — alvos diretos para ação de causa-raiz, não apenas atendimento reativo.
         </p>
       </div>
 
@@ -642,45 +651,42 @@
 
   <!-- ============ SLIDE 7 — PRODUTO ============ -->
   <section class="slide" data-slide="7">
-    <div class="gradient-mesh">
-      <div class="blob b1" style="top:-180px; right:-160px;"></div>
-      <div class="blob b2" style="bottom:-180px; left:-160px;"></div>
-    </div>
+    <div class="grain-mask"></div>
     <div class="slide-content">
       <div class="kicker">Produto final</div>
-      <h2 style="margin-top:22px;">O dashboard em <span class="grad-text">produção</span></h2>
+      <h2 style="margin-top:24px;">O dashboard em <em class="ser">produção</em></h2>
 
-      <div class="mock" style="margin-top:30px;">
+      <div class="mock" style="margin-top:32px;">
         <div class="bar-top">
-          <i style="background:#F87171"></i><i style="background:#FBBF24"></i><i style="background:#34D399"></i>
+          <i></i><i></i><i></i>
           <span>support-ticket-insight-lab.streamlit.app</span>
         </div>
         <div class="body-m">
           <div class="mock-kpis">
             <div class="mock-kpi"><b>100</b><small>Total de tickets</small></div>
-            <div class="mock-kpi"><b style="color:var(--teal)">35</b><small>Abertos</small></div>
-            <div class="mock-kpi"><b style="color:var(--primary)">65</b><small>Fechados</small></div>
-            <div class="mock-kpi"><b style="color:var(--orange)">59</b><small>Alta / Crítica</small></div>
+            <div class="mock-kpi"><b>35</b><small>Abertos</small></div>
+            <div class="mock-kpi"><b>65</b><small>Fechados</small></div>
+            <div class="mock-kpi"><b style="color:var(--accent)">59</b><small>Alta / Crítica</small></div>
           </div>
           <div class="mock-charts">
             <div class="mock-panel">
               <div class="h">Distribuição por categoria</div>
               <div class="mbars">
-                <i style="height:100%; background:var(--primary)"></i>
-                <i style="height:88%; background:var(--teal)"></i>
-                <i style="height:72%; background:#38bdf8"></i>
-                <i style="height:60%; background:var(--amber)"></i>
-                <i style="height:48%; background:var(--orange)"></i>
-                <i style="height:38%; background:#a78bfa"></i>
+                <i style="height:100%; background:var(--accent)"></i>
+                <i style="height:86%; background:var(--g3)"></i>
+                <i style="height:70%; background:var(--g4)"></i>
+                <i style="height:56%; background:var(--g4)"></i>
+                <i style="height:44%; background:var(--g5)"></i>
+                <i style="height:34%; background:var(--g5)"></i>
               </div>
             </div>
             <div class="mock-panel">
               <div class="h">Prioridade sugerida</div>
               <div class="mlines">
-                <div class="mline"><u style="width:80%; background:var(--red)"></u><span>Crítica</span></div>
-                <div class="mline"><u style="width:64%; background:var(--orange)"></u><span>Alta</span></div>
-                <div class="mline"><u style="width:52%; background:var(--amber)"></u><span>Média</span></div>
-                <div class="mline"><u style="width:34%; background:var(--green)"></u><span>Baixa</span></div>
+                <div class="mline"><u style="width:80%; background:var(--accent)"></u><span>Crítica</span></div>
+                <div class="mline"><u style="width:64%; background:var(--g3)"></u><span>Alta</span></div>
+                <div class="mline"><u style="width:52%; background:var(--g4)"></u><span>Média</span></div>
+                <div class="mline"><u style="width:34%; background:var(--g5)"></u><span>Baixa</span></div>
               </div>
             </div>
           </div>
@@ -688,18 +694,18 @@
       </div>
 
       <div class="feat" style="margin-top:30px;">
-        <div class="fc glass">
-          <div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 3H2l8 9.5V19l4 2v-8.5L22 3z"/></svg></div>
+        <div class="fc card">
+          <div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="#34506B" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M22 3H2l8 9.5V19l4 2v-8.5L22 3z"/></svg></div>
           <h4>Filtros multidimensionais</h4>
           <p>Prioridade, status, categoria, sentimento, serviço, departamento, equipe e datas.</p>
         </div>
-        <div class="fc glass">
-          <div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg></div>
+        <div class="fc card">
+          <div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="#34506B" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg></div>
           <h4>Exportação CSV</h4>
           <p>Base analisada completa ou somente os tickets do filtro ativo.</p>
         </div>
-        <div class="fc glass">
-          <div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m7 14 3-4 3 2 4-6"/></svg></div>
+        <div class="fc card">
+          <div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="#34506B" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m7 14 3-4 3 2 4-6"/></svg></div>
           <h4>Gráficos operacionais</h4>
           <p>Categoria, prioridade, sentimento, status e evolução no tempo.</p>
         </div>
@@ -713,23 +719,19 @@
 
   <!-- ============ SLIDE 8 — CTA ============ -->
   <section class="slide" data-slide="8">
-    <div class="gradient-mesh">
-      <div class="blob b1" style="top:-180px; left:-140px;"></div>
-      <div class="blob b2" style="bottom:-160px; right:-120px;"></div>
-      <div class="blob b3" style="top:520px; left:560px;"></div>
-    </div>
+    <div class="grain-mask"></div>
     <div class="slide-content">
-      <div class="kicker teal">O que os dados revelaram</div>
+      <div class="kicker">O que os dados revelaram</div>
 
       <div class="spacer"></div>
 
       <div class="learn">
         59% dos chamados nascem como alta ou crítica.<br/>
-        <span class="grad-text">Estruturar a leitura é o que transforma fila em prioridade.</span>
+        <em class="ser" style="font-size:44px;">Estruturar a leitura é o que transforma fila em prioridade.</em>
       </div>
 
-      <div class="qbox glass" style="margin-top:46px;">
-        <div style="font-size:13px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:var(--teal); margin-bottom:14px;">Fica a pergunta</div>
+      <div class="qbox card" style="margin-top:48px;">
+        <div class="qk">Fica a pergunta</div>
         <div class="q">Você confiaria numa prioridade sugerida por LLM para reordenar a fila de suporte — ou só a usaria como segunda opinião do analista?</div>
       </div>
 
@@ -742,6 +744,7 @@
 
       <div class="spacer"></div>
 
+      <hr class="rule" style="margin-bottom:32px;" />
       <div class="signature">
         <div class="avatar">L</div>
         <div>
