@@ -6,7 +6,7 @@
 <title>Support Ticket Insight Lab — Carrossel</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Newsreader:ital,opsz,wght@0,18..72,400;0,18..72,500;1,18..72,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 <style>
   /* ================================================================
      DESIGN SYSTEM — sóbrio, claro, minimalista
@@ -38,7 +38,7 @@
     --g6: #C7CCD4;
 
     --font:  'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    --serif: 'Newsreader', Georgia, 'Times New Roman', serif;
+    --serif: 'Fraunces', Georgia, 'Times New Roman', serif;
     --mono:  'JetBrains Mono', ui-monospace, monospace;
 
     --pad: 100px;
@@ -146,12 +146,13 @@
     color: var(--ink);
   }
   .accent { color: var(--accent); }
-  em.ser {
+  /* destaque de título: sans, cor de acento — legível e discreto */
+  .hl { color: var(--accent); font-weight: inherit; }
+  /* serifa (Fraunces) reservada a numerais e monograma */
+  .num-serif {
     font-family: var(--serif);
-    font-style: italic;
-    font-weight: 500;
-    letter-spacing: -0.5px;
-    color: var(--accent);
+    font-optical-sizing: auto;
+    font-feature-settings: "tnum" 1;
   }
 
   .body {
@@ -393,12 +394,12 @@
 
       <div class="spacer"></div>
 
-      <h1 style="max-width:880px;">Cada chamado de TI,<br/>lido e <em class="ser">priorizado por IA</em></h1>
+      <h1 style="max-width:880px;">Cada chamado de TI,<br/>lido e <span class="hl">priorizado por IA</span></h1>
 
       <hr class="rule" style="margin:38px 0 30px; max-width:120px; height:2px; background:var(--accent);" />
 
       <p class="body" style="max-width:740px;">
-        Um caso com <b>100 chamados</b> de infraestrutura — cada um devolvendo
+        Um caso com <b>100 chamados</b> de infraestrutura, em que cada um devolve
         <b>6 dimensões de análise</b>: categoria, sentimento, prioridade, justificativa, resumo e risco de SLA.
       </p>
 
@@ -420,10 +421,10 @@
     <div class="grain-mask"></div>
     <div class="slide-content">
       <div class="kicker">O problema que ninguém vê</div>
-      <h2 style="margin-top:24px; max-width:840px;">A fila esconde o que é <em class="ser">realmente urgente</em></h2>
+      <h2 style="margin-top:24px; max-width:840px;">A fila esconde o que é <span class="hl">realmente urgente</span></h2>
       <p class="body" style="margin-top:26px; max-width:780px;">
         Em operações de TI, o chamado entra com a prioridade que o solicitante escolheu na pressa.
-        Sem uma leitura estruturada, o crítico se mistura ao rotineiro — e o SLA escorre sem alarme.
+        Sem uma leitura estruturada, o crítico se mistura ao rotineiro e o SLA escorre sem alarme.
       </p>
 
       <div class="spacer"></div>
@@ -432,7 +433,7 @@
         <div class="bigstat">59<small>%</small></div>
         <div style="padding-bottom:18px; max-width:360px;">
           <div style="font-size:22px; font-weight:700; line-height:1.32; color:var(--ink); letter-spacing:-0.3px;">dos chamados já chegam como alta ou crítica</div>
-          <div class="body muted" style="font-size:16px; margin-top:10px;">59 de 100 tickets — 32 críticos e 27 de alta prioridade.</div>
+          <div class="body muted" style="font-size:16px; margin-top:10px;">59 de 100 tickets, sendo 32 críticos e 27 de alta prioridade.</div>
         </div>
       </div>
 
@@ -458,8 +459,8 @@
     <div class="grain-mask"></div>
     <div class="slide-content">
       <div class="kicker">Arquitetura</div>
-      <h2 style="margin-top:24px;">Como o sistema <em class="ser">funciona</em></h2>
-      <p class="body" style="margin-top:20px; max-width:760px;">Do CSV cru ao dashboard analisado — um pipeline com validação estrita antes de qualquer chamada de IA.</p>
+      <h2 style="margin-top:24px;">Como o sistema <span class="hl">funciona</span></h2>
+      <p class="body" style="margin-top:20px; max-width:760px;">Do CSV cru ao dashboard analisado, com validação estrita antes de qualquer chamada de IA.</p>
 
       <div class="spacer"></div>
 
@@ -512,7 +513,7 @@
     <div class="grain-mask"></div>
     <div class="slide-content">
       <div class="kicker">Decisões de engenharia</div>
-      <h2 style="margin-top:24px;">Por que análise <em class="ser">ticket a ticket?</em></h2>
+      <h2 style="margin-top:24px;">Por que análise <span class="hl">ticket a ticket?</span></h2>
 
       <div class="spacer"></div>
 
@@ -521,21 +522,21 @@
           <div class="num">01</div>
           <div>
             <h3>Análise individual, não em lote</h3>
-            <p>Escolhi enviar <span class="tag">cada chamado</span> ao LLM porque categoria, sentimento e risco de SLA dependem do contexto único do ticket — média não captura o caso crítico.</p>
+            <p>Escolhi enviar <span class="tag">cada chamado</span> ao LLM porque categoria, sentimento e risco de SLA dependem do contexto único do ticket, e a média não captura o caso crítico.</p>
           </div>
         </div>
         <div class="mcard card">
           <div class="num">02</div>
           <div>
             <h3>Provedores plugáveis, prompts em arquivo</h3>
-            <p>Escolhi <span class="tag">OpenAI, Gemini e Groq</span> com os prompts em <span class="tag">prompts.toml</span>: mudar o comportamento da análise é editar um arquivo — sem lock-in e sem redeploy.</p>
+            <p>Escolhi <span class="tag">OpenAI, Gemini e Groq</span> com os prompts em <span class="tag">prompts.toml</span>: mudar o comportamento da análise é editar um arquivo, sem lock-in e sem redeploy.</p>
           </div>
         </div>
         <div class="mcard card">
           <div class="num">03</div>
           <div>
             <h3>Validação antes da inteligência</h3>
-            <p>Escolhi <span class="tag">schema estrito e datas em UTC</span> porque modelo nenhum corrige dado quebrado. Fechamento antes da abertura interrompe o processo — confiabilidade vem antes da inferência.</p>
+            <p>Escolhi <span class="tag">schema estrito e datas em UTC</span> porque modelo nenhum corrige dado quebrado. Fechamento antes da abertura interrompe o processo, porque a confiabilidade vem antes da inferência.</p>
           </div>
         </div>
       </div>
@@ -551,7 +552,7 @@
     <div class="grain-mask"></div>
     <div class="slide-content">
       <div class="kicker">Resultados</div>
-      <h2 style="margin-top:24px;">O sistema em <em class="ser">números</em></h2>
+      <h2 style="margin-top:24px;">O sistema em <span class="hl">números</span></h2>
 
       <div class="spacer"></div>
 
@@ -598,8 +599,8 @@
     <div class="grain-mask"></div>
     <div class="slide-content">
       <div class="kicker">Padrões encontrados</div>
-      <h2 style="margin-top:24px;">Chamados por <em class="ser">serviço afetado</em></h2>
-      <p class="body muted" style="margin-top:18px; max-width:760px;">Top 6 serviços em volume de tickets — base de 100 chamados.</p>
+      <h2 style="margin-top:24px;">Chamados por <span class="hl">serviço afetado</span></h2>
+      <p class="body muted" style="margin-top:18px; max-width:760px;">Top 6 serviços em volume de tickets na base de 100 chamados.</p>
 
       <div class="spacer"></div>
 
@@ -639,7 +640,7 @@
       <div class="card" style="margin-top:48px; padding:30px 34px; display:flex; gap:22px; align-items:flex-start;">
         <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="#34506B" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 auto; margin-top:2px;"><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="4"/></svg>
         <p style="font-size:19px; line-height:1.52; color:var(--ink-2);">
-          <b style="color:var(--ink); font-weight:600;">VPN, Certificado e Storage</b> concentram quase um terço dos chamados — alvos diretos para ação de causa-raiz, não apenas atendimento reativo.
+          <b style="color:var(--ink); font-weight:600;">VPN, Certificado e Storage</b> concentram quase um terço dos chamados e se tornam alvos diretos para ação de causa-raiz, não apenas atendimento reativo.
         </p>
       </div>
 
@@ -654,7 +655,7 @@
     <div class="grain-mask"></div>
     <div class="slide-content">
       <div class="kicker">Produto final</div>
-      <h2 style="margin-top:24px;">O dashboard em <em class="ser">produção</em></h2>
+      <h2 style="margin-top:24px;">O dashboard em <span class="hl">produção</span></h2>
 
       <div class="mock" style="margin-top:32px;">
         <div class="bar-top">
@@ -727,12 +728,12 @@
 
       <div class="learn">
         59% dos chamados nascem como alta ou crítica.<br/>
-        <em class="ser" style="font-size:44px;">Estruturar a leitura é o que transforma fila em prioridade.</em>
+        <span class="hl">Estruturar a leitura é o que transforma fila em prioridade.</span>
       </div>
 
       <div class="qbox card" style="margin-top:48px;">
         <div class="qk">Fica a pergunta</div>
-        <div class="q">Você confiaria numa prioridade sugerida por LLM para reordenar a fila de suporte — ou só a usaria como segunda opinião do analista?</div>
+        <div class="q">Você confiaria numa prioridade sugerida por LLM para reordenar a fila de suporte, ou só a usaria como segunda opinião do analista?</div>
       </div>
 
       <div style="margin-top:40px;">
