@@ -5,6 +5,7 @@ on:
     branches: ["main"]
     paths:
       - "support-ticket-insight-lab.slides.html"
+      - ".nojekyll"
   workflow_dispatch: # permite disparo manual
 
 permissions:
