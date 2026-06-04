@@ -4,6 +4,9 @@ Aplicacao Python e Streamlit para validar e preparar tickets de suporte de infra
 
 **App publicado:** [support-ticket-insight-lab.streamlit.app](https://support-ticket-insight-lab.streamlit.app/)
 
+**Carrossel LinkedIn:** [anotther.github.io/support-ticket-insight-lab/support-ticket-insight-lab.slides.html](https://anotther.github.io/support-ticket-insight-lab/support-ticket-insight-lab.slides.html)
+> Para ativar: **Settings → Pages → Source: Deploy from branch → Branch: `main` → `/` (root) → Save**
+
 O projeto organiza a primeira etapa de um fluxo de inteligencia operacional para suporte: recebe uma base de tickets, valida o schema, separa tickets abertos e fechados, calcula idade ou tempo de resolucao e prepara colunas de analise para classificacao, sentimento, sugestao de prioridade, resumo e risco de SLA.
 
 > **Nota de privacidade:** tickets de suporte podem conter dados pessoais, ativos internos e detalhes operacionais. Use arquivos anonimizados em ambientes publicos e configure chaves de provedores somente por variaveis de ambiente ou campos seguros da sessao.
@@ -187,10 +190,17 @@ support-ticket-insight-lab/
 │     ├─ providers.py
 │     ├─ schema.py
 │     └─ validator.py
+├─ docs/
+│  └─ linkedin/
+│     ├─ post.md          ← texto do post pronto para copiar
+│     └─ slides.pdf       ← PDF gerado automaticamente pela CI
+├─ scripts/
+│  └─ generate-pdf.js     ← gera o PDF via Puppeteer
 ├─ tests/
 ├─ .github/workflows/
 ├─ pyproject.toml
 ├─ requirements.txt
+├─ support-ticket-insight-lab.slides.html  ← carrossel LinkedIn (8 slides)
 ├─ support_tickets_mock.csv
 └─ README.md
 ```
