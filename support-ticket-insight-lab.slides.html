@@ -367,10 +367,90 @@
 
   .eyebrow-stat { display: flex; align-items: baseline; gap: 28px; }
 
+  /* ===================================================================
+     ANIMAÇÕES — somente tela, somente se o usuário não preferir redução
+     O estado padrão (sem .will-animate) é sempre visível → PDF seguro.
+     =================================================================== */
+  @media screen {
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0);    }
+    }
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.94); }
+      to   { opacity: 1; transform: scale(1);    }
+    }
+    @keyframes fillBar {
+      from { width: 0 !important; }
+    }
+    @keyframes rulerIn {
+      from { max-width: 0; }
+      to   { max-width: 120px; }
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      /* — emblema — */
+      .will-animate .emblem       { animation: scaleIn 0.5s 0.05s cubic-bezier(.22,1,.36,1) both; }
+      /* — kicker + régua — */
+      .will-animate .kicker       { animation: fadeUp  0.5s 0.06s cubic-bezier(.22,1,.36,1) both; }
+      .will-animate hr.rule       { animation: rulerIn 0.4s 0.28s cubic-bezier(.22,1,.36,1) both; overflow:hidden; }
+      /* — títulos — */
+      .will-animate h1            { animation: fadeUp  0.55s 0.14s cubic-bezier(.22,1,.36,1) both; }
+      .will-animate h2            { animation: fadeUp  0.55s 0.14s cubic-bezier(.22,1,.36,1) both; }
+      .will-animate .learn        { animation: fadeUp  0.55s 0.12s cubic-bezier(.22,1,.36,1) both; }
+      /* — corpo e badges — */
+      .will-animate .body         { animation: fadeUp  0.5s  0.26s cubic-bezier(.22,1,.36,1) both; }
+      .will-animate .badges       { animation: fadeUp  0.45s 0.36s cubic-bezier(.22,1,.36,1) both; }
+      /* — cards genéricos — */
+      .will-animate .card         { animation: fadeUp  0.45s 0.22s cubic-bezier(.22,1,.36,1) both; }
+      .will-animate .qbox.card    { animation: fadeUp  0.45s 0.32s cubic-bezier(.22,1,.36,1) both; }
+      /* — KPIs escalonados — */
+      .will-animate .kpi:nth-child(1) { animation: scaleIn 0.42s 0.10s cubic-bezier(.22,1,.36,1) both; }
+      .will-animate .kpi:nth-child(2) { animation: scaleIn 0.42s 0.19s cubic-bezier(.22,1,.36,1) both; }
+      .will-animate .kpi:nth-child(3) { animation: scaleIn 0.42s 0.28s cubic-bezier(.22,1,.36,1) both; }
+      .will-animate .kpi:nth-child(4) { animation: scaleIn 0.42s 0.37s cubic-bezier(.22,1,.36,1) both; }
+      /* — bigstat — */
+      .will-animate .bigstat      { animation: scaleIn 0.6s 0.10s cubic-bezier(.22,1,.36,1) both; }
+      /* — pipeline: etapas escalonadas — */
+      .will-animate .pipe-row:nth-child(1) .pstep { animation: fadeUp 0.45s 0.10s cubic-bezier(.22,1,.36,1) both; }
+      .will-animate .pipe-row:nth-child(2) .pstep { animation: fadeUp 0.45s 0.22s cubic-bezier(.22,1,.36,1) both; }
+      .will-animate .pipe-row:nth-child(3) .pstep { animation: fadeUp 0.45s 0.34s cubic-bezier(.22,1,.36,1) both; }
+      /* — metodologia: cards escalonados — */
+      .will-animate .mcard:nth-child(1) { animation: fadeUp 0.45s 0.08s cubic-bezier(.22,1,.36,1) both; }
+      .will-animate .mcard:nth-child(2) { animation: fadeUp 0.45s 0.18s cubic-bezier(.22,1,.36,1) both; }
+      .will-animate .mcard:nth-child(3) { animation: fadeUp 0.45s 0.28s cubic-bezier(.22,1,.36,1) both; }
+      /* — barras de progresso — */
+      .will-animate .fill         { animation: fillBar 0.9s 0.22s cubic-bezier(.22,1,.36,1) both; }
+      .will-animate .drow:nth-child(1) .dfill { animation: fillBar 0.8s 0.10s cubic-bezier(.22,1,.36,1) both; }
+      .will-animate .drow:nth-child(2) .dfill { animation: fillBar 0.8s 0.18s cubic-bezier(.22,1,.36,1) both; }
+      .will-animate .drow:nth-child(3) .dfill { animation: fillBar 0.8s 0.26s cubic-bezier(.22,1,.36,1) both; }
+      .will-animate .drow:nth-child(4) .dfill { animation: fillBar 0.8s 0.34s cubic-bezier(.22,1,.36,1) both; }
+      .will-animate .drow:nth-child(5) .dfill { animation: fillBar 0.8s 0.42s cubic-bezier(.22,1,.36,1) both; }
+      .will-animate .drow:nth-child(6) .dfill { animation: fillBar 0.8s 0.50s cubic-bezier(.22,1,.36,1) both; }
+      /* — mock + features — */
+      .will-animate .mock         { animation: fadeUp 0.5s  0.18s cubic-bezier(.22,1,.36,1) both; }
+      .will-animate .feat .fc:nth-child(1) { animation: fadeUp 0.4s 0.28s cubic-bezier(.22,1,.36,1) both; }
+      .will-animate .feat .fc:nth-child(2) { animation: fadeUp 0.4s 0.36s cubic-bezier(.22,1,.36,1) both; }
+      .will-animate .feat .fc:nth-child(3) { animation: fadeUp 0.4s 0.44s cubic-bezier(.22,1,.36,1) both; }
+      /* — assinatura — */
+      .will-animate .signature    { animation: fadeUp 0.45s 0.42s cubic-bezier(.22,1,.36,1) both; }
+      .will-animate .ghlink       { animation: fadeUp 0.45s 0.50s cubic-bezier(.22,1,.36,1) both; }
+
+      /* hover sutil em cards (tela) */
+      .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 2px 4px rgba(16,24,40,.05), 0 20px 48px rgba(16,24,40,.10);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+    }
+  }
+
   /* ===== PRINT / PDF export 1080x1350 ===== */
   @page { size: 1080px 1350px; margin: 0; }
   @media print {
     html, body { background: #fff; }
+    /* garante que nenhuma animação afete o PDF */
+    *, *::before, *::after { animation: none !important; transition: none !important; }
     * { orphans: 3; widows: 3; }
     .card, .kpi, .mcard, .pstep, .feat .fc, .mock { break-inside: avoid; page-break-inside: avoid; }
     .carousel-container { display: block; overflow: visible; padding: 0; gap: 0; }
@@ -780,7 +860,10 @@
       <div class="signature">
         <div class="avatar">L</div>
         <div>
-          <div class="nm">Leonardo</div>
+          <div class="nm">
+            <a href="https://www.linkedin.com/in/leofortes/" target="_blank" rel="noopener"
+               style="color:inherit; text-decoration:none; border-bottom:2px solid var(--accent-line);">Leonardo</a>
+          </div>
           <div class="tt">Analista de Dados e Automação</div>
         </div>
       </div>
@@ -789,5 +872,27 @@
   </section>
 
 </div>
+
+<script>
+  /* IntersectionObserver — adiciona .will-animate quando o slide entra na viewport.
+     Não roda em contexto de impressão (Puppeteer usa @media print, JS não é executado
+     durante page.pdf(); em impressão do navegador, matchMedia('print') retorna true). */
+  (function () {
+    if (typeof window === 'undefined') return;
+    if (window.matchMedia && window.matchMedia('print').matches) return;
+    if (!('IntersectionObserver' in window)) return;
+
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          e.target.classList.add('will-animate');
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.06, rootMargin: '0px 0px -30px 0px' });
+
+    document.querySelectorAll('.slide').forEach(function (s) { io.observe(s); });
+  })();
+</script>
 </body>
 </html>
