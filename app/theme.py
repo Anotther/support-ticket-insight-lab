@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import streamlit as st
-import streamlit.components.v1 as components
 
 COLOR_MAP_SENTIMENT: dict[str, str] = {
     "Positivo": "#2DD4BF",
@@ -33,8 +32,6 @@ PLOTLY_LAYOUT_DEFAULTS: dict = {
     "xaxis": {"automargin": True},
 }
 
-_REPO_URL = "https://github.com/anotther/support-ticket-insight-lab"
-
 _CSS = """
 <style>
 [data-testid="stMetric"] {
@@ -57,47 +54,17 @@ section[data-testid="stSidebar"] > div {
     padding-top: 1.5rem;
 }
 
-/* Hide Share, Favorite and Rename toolbar buttons */
+/* Hide Share, Favorite, Rename and GitHub toolbar buttons */
 [data-testid="stToolbarActionButtonShare"],
 [data-testid="stToolbarActionButtonFavorite"],
 [data-testid="stToolbarActionButtonStar"],
 [data-testid="stToolbarActionButtonRename"],
-[data-testid="stToolbarActionButtonEdit"] {
+[data-testid="stToolbarActionButtonEdit"],
+[data-testid="stToolbarActionButtonGithub"] {
     display: none !important;
 }
 </style>
 """
 
-_FIX_GITHUB_JS = f"""
-<script>
-(function fixGithubLink() {{
-    try {{
-        var doc = window.parent.document;
-        var links = doc.querySelectorAll('a[href*="github.com"]');
-        links.forEach(function(link) {{
-            if (link.href.includes('github.com/anotther/support-ticket-insight-lab')) {{
-                link.href = '{_REPO_URL}';
-                link.target = '_blank';
-                link.rel = 'noopener noreferrer';
-            }}
-        }});
-    }} catch (e) {{}}
-}})();
-setTimeout(function() {{
-    try {{
-        var doc = window.parent.document;
-        var links = doc.querySelectorAll('a[href*="github.com"]');
-        links.forEach(function(link) {{
-            if (link.href.includes('github.com/anotther/support-ticket-insight-lab')) {{
-                link.href = '{_REPO_URL}';
-            }}
-        }});
-    }} catch (e) {{}}
-}}, 2000);
-</script>
-"""
-
-
 def apply_global_css() -> None:
     st.markdown(_CSS, unsafe_allow_html=True)
-    components.html(_FIX_GITHUB_JS, height=0, scrolling=False)

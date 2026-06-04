@@ -58,6 +58,14 @@ def render_sidebar_config() -> SidebarConfig:
         st.session_state.pop("processed_df", None)
         st.rerun()
 
+    st.sidebar.divider()
+    st.sidebar.link_button(
+        "GitHub",
+        "https://github.com/anotther/support-ticket-insight-lab",
+        icon=":material/code:",
+        use_container_width=True,
+    )
+
     return SidebarConfig(
         selected_provider=selected_provider,
         selected_model=selected_model,
