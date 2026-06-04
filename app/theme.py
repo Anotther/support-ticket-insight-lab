@@ -53,6 +53,16 @@ _CSS = """
 section[data-testid="stSidebar"] > div {
     padding-top: 1.5rem;
 }
+
+/* Hide Share, Favorite, Rename and GitHub toolbar buttons */
+[data-testid="stToolbarActionButtonShare"],
+[data-testid="stToolbarActionButtonFavorite"],
+[data-testid="stToolbarActionButtonStar"],
+[data-testid="stToolbarActionButtonRename"],
+[data-testid="stToolbarActionButtonEdit"],
+[data-testid="stToolbarActionButtonGithub"] {
+    display: none !important;
+}
 </style>
 """
 
