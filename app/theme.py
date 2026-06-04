@@ -66,5 +66,6 @@ section[data-testid="stSidebar"] > div {
 </style>
 """
 
+
 def apply_global_css() -> None:
     st.markdown(_CSS, unsafe_allow_html=True)
