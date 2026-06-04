@@ -1,0 +1,41 @@
+name: Generate LinkedIn PDF
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "support-ticket-insight-lab.slides.html"
+      - "scripts/generate-pdf.js"
+
+jobs:
+  pdf:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          # token com permissão de push (necessário para commit de volta)
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Puppeteer
+        run: npm install puppeteer
+
+      - name: Generate PDF
+        run: node scripts/generate-pdf.js
+
+      - name: Commit PDF
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/linkedin/slides.pdf
+          git diff --staged --quiet && echo "Nenhuma alteração no PDF" || \
+            git commit -m "ci: regenerate LinkedIn carousel PDF [skip ci]"
+          git push
